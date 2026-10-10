@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تجربة: هل هذه رسالة تصيّد؟</title>
+<style>
+:root{--bg:#EAF1FA;--card:#fff;--ink:#1A1A1A;--navy:#12355B;--blue:#2E75B6;--soft:#DCE9F7;--gold:#C9A227;--red:#B3261E;--redbg:#FDECEA;--green:#1E7B3A;--greenbg:#E6F4EA;--mark:#FFF1B8;--line:#C9D6E6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1B2D;--card:#16263D;--ink:#EDF2F8;--navy:#9CC4EE;--blue:#6FA8DC;--soft:#1F3555;--gold:#E3C25A;--red:#FF8A80;--redbg:#3A1F24;--green:#7FD39A;--greenbg:#18332A;--mark:#5A4A12;--line:#2C4466}}
+:root[data-theme="dark"]{--bg:#0F1B2D;--card:#16263D;--ink:#EDF2F8;--navy:#9CC4EE;--blue:#6FA8DC;--soft:#1F3555;--gold:#E3C25A;--red:#FF8A80;--redbg:#3A1F24;--green:#7FD39A;--greenbg:#18332A;--mark:#5A4A12;--line:#2C4466}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Times New Roman",Times,"Noto Naskh Arabic",serif;font-size:19px;line-height:1.7}
+main{max-width:720px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:26px;color:var(--navy);margin:6px 0 2px;line-height:1.35}
+.sub{margin:0 0 14px;color:var(--ink);opacity:.85}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.track{flex:1;height:8px;background:var(--soft);border-radius:8px;overflow:hidden}
+.fill{height:100%;background:var(--blue);width:0;transition:width .3s}
+.step{font-weight:bold;color:var(--navy);white-space:nowrap}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.mh{background:var(--soft);padding:10px 14px;font-size:16px;color:var(--navy);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.mb{padding:14px 16px}
+.mb p{margin:0 0 10px}
+.row{margin:0 0 6px;font-size:17px}
+.row b{color:var(--navy)}
+button{font:inherit;color:inherit}
+.mark{background:transparent;border:0;border-bottom:2px dashed var(--blue);padding:0 2px;cursor:pointer;border-radius:3px;text-align:inherit;display:inline}
+.mark:hover{background:var(--soft)}
+.mark[aria-pressed="true"]{background:var(--mark);border-bottom-style:solid;border-bottom-color:var(--gold)}
+.mark.hit{background:var(--redbg);border-bottom:2px solid var(--red)}
+.mark.miss{background:var(--mark);border-bottom:2px dotted var(--gold)}
+.mark.ok{background:var(--greenbg);border-bottom:2px solid var(--green)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.ltr{direction:ltr;unicode-bidi:isolate;font-weight:bold}
+.hint{margin:14px 0 8px;color:var(--navy);font-weight:bold}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-size:19px;font-weight:bold;cursor:pointer;min-height:48px;flex:1 1 180px}
+.b-red{background:var(--red);color:#fff}.b-green{background:var(--green);color:#fff}.b-navy{background:var(--navy);color:var(--bg)}
+:root:not([data-theme="light"]) .b-red,:root:not([data-theme="light"]) .b-green{color:#0F1B2D}
+.fb{margin-top:16px;border-radius:14px;padding:14px 16px;border:1px solid var(--line);background:var(--card)}
+.fb.good{border-color:var(--green);background:var(--greenbg)}.fb.bad{border-color:var(--red);background:var(--redbg)}
+.fb h2{margin:0 0 6px;font-size:21px;color:var(--navy)}
+.fb ul{margin:6px 0 10px;padding-inline-start:22px}
+.fb li{margin-bottom:6px}
+.tip{background:var(--card);border-inline-start:6px solid var(--gold);padding:8px 12px;border-radius:8px;margin:10px 0}
+.end{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.score{font-size:42px;font-weight:bold;color:var(--navy);margin:0}
+.rules{padding-inline-start:22px}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>تجربة: هل هذه رسالة تصيّد؟</h1>
+  <p class="sub">افحص كل رسالة كما تفعل قبل أن تضغط: اضغط على الأجزاء التي تشكّ بها، ثم قرّر.</p>
+  <div class="bar"><span class="step" id="step"></span><div class="track"><div class="fill" id="fill"></div></div></div>
+  <div id="stage"></div>
+</main>
+<script>
+var CASES=[
+{kind:'email',
+ head:[['من','إدارة الحسابات الجامعية  ','no-reply@karbala-login.xyz','s'],['الموضوع','عاجل: تأكيد الحساب']],
+ body:[
+  [['عزيزي المستخدم،','g']],
+  [['عاجل! حسابك الجامعي سيُغلق خلال 24 ساعة.','u']],
+  [['اضغط على الرابط لتأكيد كلمة المرور:','p'],[' ',''],['http://karbala-login.xyz','l']]],
+ phish:true,
+ flags:{s:'عنوان المرسل غريب ولا يطابق نطاق الجامعة الرسمي.',u:'استعجال وتخويف: «خلال 24 ساعة» يدفعك للتصرف دون تفكير.',p:'لا جهة رسمية تطلب كلمة المرور برسالة.',l:'الرابط لا يطابق الموقع الرسمي للجامعة، وهو فخ لسرقة البيانات.',g:'تحية عامة بلا اسمك، وهذا شائع في الرسائل الجماعية.'},
+ act:'لا تضغط على الرابط. افتح موقع الجامعة بنفسك من المتصفح، أو بلّغ الجهة المختصة ثم احذف الرسالة.'},
+{kind:'email',
+ head:[['من','قسم الحاسوب  ','info@uokerbala.edu.iq','s'],['الموضوع','تغيير موعد المحاضرة']],
+ body:[[['تم نقل محاضرة الأمن والشبكات إلى يوم الأحد الساعة التاسعة صباحاً.','']],[['هذا إشعار للعلم ولا يتطلب أي رد منك.','']]],
+ phish:false,
+ flags:{},
+ safe:['المرسل بنطاق الجامعة الرسمي نفسه.','لا يوجد رابط ولا طلب كلمة مرور أو رمز.','لا استعجال ولا تخويف، والمحتوى متوقع.'],
+ act:'رسالة تبدو سليمة. ومع ذلك، إذا خالجك شك فتأكد من الإعلان عبر منصة الكلية أو من مدرّس المادة.'},
+{kind:'sms',
+ head:[['من','رقم مجهول','','s']],
+ body:[
+  [['رمز التحقق الخاص بحسابك وصل إلى هاتفك.','']],
+  [['أرسله لنا الآن','p'],[' ',''],['لتفادي إيقاف الحساب.','u']]],
+ phish:true,
+ flags:{s:'المرسل رقم مجهول وليس جهة تعرفها.',p:'رمز التحقق هو المفتاح الثاني لحسابك، ولا جهة رسمية تطلبه منك.',u:'تهديد بإيقاف الحساب لدفعك للإسراع.'},
+ act:'لا ترسل الرمز لأحد أبداً. إذا لم تطلبه أنت فغيّر كلمة مرور حسابك وفعّل التحقق بخطوتين.'},
+{kind:'call',
+ head:[['المتصل','موظف يدّعي أنه من البنك','','s']],
+ body:[
+  [['«نحن من البنك، لاحظنا عملية مشبوهة على بطاقتك.»','']],
+  [['«لحمايتها أخبرني الآن برقم البطاقة والرمز الذي وصلك.»','p']],
+  [['«إن تأخرت سيُجمَّد حسابك خلال دقائق.»','u']]],
+ phish:true,
+ flags:{s:'اتصال غير متوقع من رقم لا تعرفه، والرقم الظاهر على الشاشة قد يُزوَّر ولا يثبت الهوية.',p:'لا بنك يطلب رقم البطاقة أو الرمز بالهاتف.',u:'ضغط الوقت يمنعك من التفكير والتحقق.'},
+ act:'أنهِ المكالمة فوراً، ثم اتصل بالبنك بنفسك من الرقم الرسمي المطبوع على بطاقتك أو من موقعه الرسمي.'}
+];
+var i=0,score=0,sel={},done=false;
+var stage=document.getElementById('stage');
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function part(t,k,url){
+  if(!t.trim())return esc(t);
+  var cls=url?' class="ltr"':'';
+  return '<button type="button" class="mark" data-k="'+(k||'n')+'" data-t="'+esc(t)+'" aria-pressed="false"><span'+cls+'>'+esc(t)+'</span></button>';}
+function render(){
+  var c=CASES[i];done=false;sel={};
+  document.getElementById('step').textContent='الحالة '+(i+1)+' من '+CASES.length;
+  document.getElementById('fill').style.width=(i/CASES.length*100)+'%';
+  var h=c.head.map(function(r){
+    var v=r[2]?esc(r[1])+'&lt;'+part(r[2],r[3],true)+'&gt;':part(r[1],r[3]);
+    if(!r[3]&&!r[2])v=esc(r[1]);
+    return '<p class="row"><b>'+esc(r[0])+':</b> '+v+'</p>';}).join('');
+  var b=c.body.map(function(p){return '<p>'+p.map(function(s){return s[1]==='l'?part(s[0],'l',true):(s[0].trim()?part(s[0],s[1]):esc(s[0]));}).join('')+'</p>';}).join('');
+  var label=c.kind==='sms'?'رسالة نصية SMS':c.kind==='call'?'مكالمة هاتفية':'بريد إلكتروني';
+  stage.innerHTML='<div class="msg"><div class="mh"><span>'+label+'</span><span>'+(c.kind==='email'?'وارد':'الآن')+'</span></div><div class="mb">'+h+'<hr style="border:0;border-top:1px solid var(--line);margin:8px 0 12px">'+b+'</div></div>'
+   +'<p class="hint">اضغط على أي جزء تشكّ به ثم اختر قرارك:</p>'
+   +'<div class="acts"><button class="btn b-red" data-v="1">هذا تصيّد</button><button class="btn b-green" data-v="0">رسالة سليمة</button></div><div id="fb" aria-live="polite"></div>';
+}
+stage.addEventListener('click',function(e){
+  var m=e.target.closest('.mark');
+  if(m&&!done){var on=m.getAttribute('aria-pressed')!=='true';m.setAttribute('aria-pressed',on);return;}
+  var v=e.target.closest('[data-v]');
+  if(v&&!done){decide(v.getAttribute('data-v')==='1');return;}
+  if(e.target.closest('#next')){i++;if(i<CASES.length)render();else finish();window.scrollTo(0,0);}
+  if(e.target.closest('#again')){i=0;score=0;render();window.scrollTo(0,0);}
+});
+function decide(sayPhish){
+  done=true;var c=CASES[i],ok=(sayPhish===c.phish);if(ok)score++;
+  stage.querySelectorAll('.acts .btn').forEach(function(b){b.disabled=true;b.style.opacity=.5});
+  var found=0,list='';
+  stage.querySelectorAll('.mark').forEach(function(m){
+    var k=m.getAttribute('data-k'),pressed=m.getAttribute('aria-pressed')==='true',isFlag=!!c.flags[k]&&k!=='n';
+    if(isFlag&&pressed){m.classList.add('hit');found++;}else if(isFlag){m.classList.add('miss');}
+  });
+  var keys=Object.keys(c.flags);
+  keys.forEach(function(k){
+    var el=stage.querySelector('.mark[data-k="'+k+'"]');
+    var hit=el&&el.classList.contains('hit');
+    list+='<li>'+(hit?'✓ وجدته: ':'○ فاتك: ')+'<b>'+esc(el?el.getAttribute('data-t'):'')+'</b> — '+esc(c.flags[k])+'</li>';});
+  var extra='';
+  if(!c.phish){extra='<ul>'+c.safe.map(function(s){return '<li>✓ '+esc(s)+'</li>'}).join('')+'</ul>';}
+  var verdict=ok?(c.phish?'أحسنت، هذه رسالة تصيّد.':'أحسنت، هذه رسالة سليمة.'):(c.phish?'ليست كذلك، هذه رسالة تصيّد.':'ليست كذلك، هذه رسالة سليمة، وليس كل رسالة مشبوهة.');
+  var more=c.phish?('<p>العلامات التي وجدتها: '+found+' من '+keys.length+'</p><ul>'+list+'</ul>'):extra;
+  document.getElementById('fb').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><h2>'+verdict+'</h2>'+more+'<div class="tip"><b>التصرف الصحيح:</b> '+esc(c.act)+'</div><button class="btn b-navy" id="next">'+(i<CASES.length-1?'الحالة التالية':'اعرض النتيجة')+'</button></div>';
+  document.getElementById('next').focus();
+}
+function finish(){
+  document.getElementById('fill').style.width='100%';
+  document.getElementById('step').textContent='انتهت التجربة';
+  var n=CASES.length;var msg=score===n?'ممتاز، عينك مدرّبة.':score>=n-1?'جيد، راجع الحالة التي أخطأت بها.':'لا بأس، أعد التجربة وانتبه للعلامات.';
+  stage.innerHTML='<div class="end"><p class="score">'+score+' من '+CASES.length+'</p><p>'+msg+'</p><p><b>ثلاث قواعد تحميك:</b></p><ol class="rules"><li>لا تضغط على رابط وصلك في رسالة تطلب بياناتك، بل ادخل الموقع بنفسك.</li><li>لا تعطِ كلمة المرور أو رمز التحقق لأحد، حتى لو بدا رسمياً.</li><li>الاستعجال والتخويف علامة خطر، فتمهّل وتحقق من الجهة بقناة ثانية.</li></ol><button class="btn b-navy" id="again">أعد التجربة</button></div>';
+}
+render();
+</script>
+</body>
+</html>
